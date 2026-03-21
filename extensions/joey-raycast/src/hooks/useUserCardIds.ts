@@ -7,10 +7,7 @@ import { supabase } from "../lib/supabase";
  * Returns a plain array (Sets don't survive useCachedPromise serialization).
  */
 async function fetchUserCardDictionaryIds(userId: string): Promise<string[]> {
-  const { data: cardRows, error } = await supabase
-    .from("user_cards")
-    .select("dictionary_id")
-    .eq("user_id", userId);
+  const { data: cardRows, error } = await supabase.from("user_cards").select("dictionary_id").eq("user_id", userId);
 
   if (error) {
     throw new Error(`Failed to fetch user cards: ${error.message}`);
@@ -30,10 +27,7 @@ export function useUserCardIds(userId: string | null) {
     { execute: !!userId },
   );
 
-  const userCardIds = useMemo(
-    () => new Set(Array.isArray(data) ? data : []),
-    [data],
-  );
+  const userCardIds = useMemo(() => new Set(Array.isArray(data) ? data : []), [data]);
 
   return { userCardIds, isLoading, error, revalidate };
 }

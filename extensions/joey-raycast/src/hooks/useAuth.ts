@@ -1,7 +1,6 @@
 import { getPreferenceValues } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { signIn } from "../lib/auth";
-import type { ExtensionPreferences } from "../types";
 import type { User } from "@supabase/supabase-js";
 
 /**
@@ -9,7 +8,7 @@ import type { User } from "@supabase/supabase-js";
  * Always calls signIn to ensure the Supabase client has an active session.
  */
 export function useAuth() {
-  const { email, password } = getPreferenceValues<ExtensionPreferences>();
+  const { email, password } = getPreferenceValues<Preferences>();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

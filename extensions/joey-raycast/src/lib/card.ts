@@ -8,10 +8,7 @@ const POSTGRESQL_UNIQUE_VIOLATION = "23505";
  * Reason: Supabase may return the violation as a postgres code or as a message string
  * depending on the client version and error context.
  */
-function isDuplicateViolation(error: {
-  code?: string;
-  message?: string;
-}): boolean {
+function isDuplicateViolation(error: { code?: string; message?: string }): boolean {
   return (
     error.code === POSTGRESQL_UNIQUE_VIOLATION ||
     !!error.message?.includes("duplicate") ||
@@ -57,11 +54,7 @@ function createFsrsInitialState() {
  * @param deckId - Target deck ID
  * @returns Result with success status, optional cardId, or error message
  */
-export async function addCardToDeck(
-  userId: string,
-  entry: DictionaryEntry,
-  deckId: string,
-): Promise<AddCardResult> {
+export async function addCardToDeck(userId: string, entry: DictionaryEntry, deckId: string): Promise<AddCardResult> {
   // Check if card already exists in user's deck
   const { data: existingCard, error: checkError } = await supabase
     .from("user_cards")

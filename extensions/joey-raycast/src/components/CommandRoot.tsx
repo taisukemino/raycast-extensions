@@ -1,13 +1,4 @@
-import {
-  List,
-  Action,
-  ActionPanel,
-  Detail,
-  showToast,
-  Toast,
-  openExtensionPreferences,
-  Icon,
-} from "@raycast/api";
+import { List, Action, ActionPanel, Detail, showToast, Toast, openExtensionPreferences, Icon } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
@@ -25,28 +16,18 @@ import type { DictionaryEntry } from "../types";
  * Shared root component for all commands.
  * Uses a single persistent List to prevent Raycast from resetting the search bar.
  */
-export function CommandRoot({
-  initialSearchText,
-}: {
-  initialSearchText?: string;
-}) {
+export function CommandRoot({ initialSearchText }: { initialSearchText?: string }) {
   const [searchText, setSearchText] = useState(initialSearchText ?? "");
   const { user, isLoading: isAuthLoading, error: authError, email } = useAuth();
 
-  const { data: hasPro, isLoading: isProLoading } = useCachedPromise(
-    () => isProUser(user?.id ?? ""),
-    [],
-    { execute: !!user },
-  );
+  const { data: hasPro, isLoading: isProLoading } = useCachedPromise(() => isProUser(user?.id ?? ""), [], {
+    execute: !!user,
+  });
 
   const { decks, isLoading: isDecksLoading } = useDecks(user?.id ?? null);
-  const [selectedDeckId, setSelectedDeckId] = useState<string>(
-    decks[0]?.id ?? "",
-  );
+  const [selectedDeckId, setSelectedDeckId] = useState<string>(decks[0]?.id ?? "");
 
-  const { userCardIds, revalidate: revalidateUserCards } = useUserCardIds(
-    user?.id ?? null,
-  );
+  const { userCardIds, revalidate: revalidateUserCards } = useUserCardIds(user?.id ?? null);
 
   const isAuthenticated = !!user && hasPro === true;
   const {
@@ -67,17 +48,11 @@ export function CommandRoot({
       <List>
         <List.EmptyView
           title="Authentication Failed"
-          description={
-            authError.message ||
-            "Check your Joey credentials in extension preferences."
-          }
+          description={authError.message || "Check your Joey credentials in extension preferences."}
           icon={Icon.ExclamationMark}
           actions={
             <ActionPanel>
-              <Action
-                title="Open Preferences"
-                onAction={openExtensionPreferences}
-              />
+              <Action title="Open Preferences" onAction={openExtensionPreferences} />
             </ActionPanel>
           }
         />
@@ -94,8 +69,7 @@ export function CommandRoot({
     );
   }
 
-  const isLoading =
-    isAuthLoading || isProLoading || isDecksLoading || isSearching;
+  const isLoading = isAuthLoading || isProLoading || isDecksLoading || isSearching;
   const hasResults = !!results?.length;
 
   async function handleAddCard(entry: DictionaryEntry) {
@@ -168,43 +142,24 @@ export function CommandRoot({
       onSearchTextChange={setSearchText}
       throttle={true}
       searchBarAccessory={
-        <List.Dropdown
-          tooltip="Select Deck"
-          storeValue={true}
-          onChange={setSelectedDeckId}
-        >
+        <List.Dropdown tooltip="Select Deck" storeValue={true} onChange={setSelectedDeckId}>
           {decks.map((deck) => (
-            <List.Dropdown.Item
-              key={deck.id}
-              title={deck.name}
-              value={deck.id}
-            />
+            <List.Dropdown.Item key={deck.id} title={deck.name} value={deck.id} />
           ))}
         </List.Dropdown>
       }
     >
       {searchText.length === 0 ? (
-        <List.EmptyView
-          title="Type a word to search"
-          icon={Icon.MagnifyingGlass}
-        />
+        <List.EmptyView title="Type a word to search" icon={Icon.MagnifyingGlass} />
       ) : searchError ? (
-        <List.EmptyView
-          title="Search Failed"
-          description={searchError.message}
-          icon={Icon.ExclamationMark}
-        />
+        <List.EmptyView title="Search Failed" description={searchError.message} icon={Icon.ExclamationMark} />
       ) : results && results.length === 0 ? (
         <List.EmptyView
           title={`No results for "${searchText}"`}
           icon={Icon.XMarkCircle}
           actions={
             <ActionPanel>
-              <Action
-                title="Request Card"
-                icon={Icon.PlusCircle}
-                onAction={() => handleRequestCard(searchText)}
-              />
+              <Action title="Request Card" icon={Icon.PlusCircle} onAction={() => handleRequestCard(searchText)} />
             </ActionPanel>
           }
         />
@@ -217,20 +172,14 @@ export function CommandRoot({
               key={entry.id}
               title={entry.word}
               subtitle={entry.definition}
-              accessories={
-                isAlreadyInDeck
-                  ? [{ icon: Icon.CheckCircle, tooltip: "Already in deck" }]
-                  : []
-              }
+              accessories={isAlreadyInDeck ? [{ icon: Icon.CheckCircle, tooltip: "Already in deck" }] : []}
               detail={<EntryDetail entry={entry} isLoading={isSearching} />}
               actions={
                 <ActionPanel>
                   <Action
                     title="Pronounce"
                     icon={Icon.SpeakerHigh}
-                    onAction={() =>
-                      pronounceWord(entry.word_audio_path, entry.word)
-                    }
+                    onAction={() => pronounceWord(entry.word_audio_path, entry.word)}
                   />
                   <Action
                     title="Add to Deck"

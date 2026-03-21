@@ -6,14 +6,10 @@ import { searchDictionary } from "../lib/dictionary";
  * Keeps previous results visible while new results load.
  */
 export function useDictionarySearch(searchText: string) {
-  const { data, isLoading, error } = useCachedPromise(
-    (query: string) => searchDictionary(query),
-    [searchText],
-    {
-      execute: searchText.length > 0,
-      keepPreviousData: true,
-    },
-  );
+  const { data, isLoading, error } = useCachedPromise((query: string) => searchDictionary(query), [searchText], {
+    execute: searchText.length > 0,
+    keepPreviousData: true,
+  });
 
   return { results: data ?? null, isLoading, error };
 }

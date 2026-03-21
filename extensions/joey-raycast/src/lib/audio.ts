@@ -15,10 +15,7 @@ function speakWithTts(word: string): void {
  * @param audioPath - Audio path from dictionary entry
  * @param word - The word to pronounce (used as TTS fallback)
  */
-export async function pronounceWord(
-  audioPath: string | null,
-  word: string,
-): Promise<void> {
+export async function pronounceWord(audioPath: string | null, word: string): Promise<void> {
   const audioUrl = getAudioUrl(audioPath);
 
   if (!audioUrl) {
@@ -33,10 +30,7 @@ export async function pronounceWord(
   }
 
   const buffer = Buffer.from(await response.arrayBuffer());
-  const pronunciationFilePath = join(
-    environment.supportPath,
-    "pronunciation.mp3",
-  );
+  const pronunciationFilePath = join(environment.supportPath, "pronunciation.mp3");
   await writeFile(pronunciationFilePath, buffer);
   exec(`afplay "${pronunciationFilePath}"`);
 }

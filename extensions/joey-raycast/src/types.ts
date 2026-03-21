@@ -24,9 +24,7 @@ export type Deck = {
   updated_at: string;
 };
 
-export type AddCardResult =
-  | { success: true; cardId: string }
-  | { success: false; error: string };
+export type AddCardResult = { success: true; cardId: string } | { success: false; error: string };
 
 export type RequestCardSource = "search" | "list" | "add";
 
@@ -37,11 +35,4 @@ export interface RequestCardPayload {
   user?: string;
 }
 
-export type RequestCardResult =
-  | { success: true }
-  | { success: false; error: string };
-
-export interface ExtensionPreferences {
-  email: string;
-  password: string;
-}
+export type RequestCardResult = { success: true } | { success: false; error: string };

@@ -7,9 +7,7 @@ import type { RequestCardPayload, RequestCardResult } from "../types";
  * @param payload - Request card payload with word and context
  * @returns Result with success status or error message
  */
-export async function submitRequestCard(
-  payload: RequestCardPayload,
-): Promise<RequestCardResult> {
+export async function submitRequestCard(payload: RequestCardPayload): Promise<RequestCardResult> {
   try {
     const response = await fetch(REQUEST_CARD_WEBHOOK_URL, {
       method: "POST",
@@ -31,8 +29,7 @@ export async function submitRequestCard(
 
     return { success: true };
   } catch (error) {
-    const webhookErrorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+    const webhookErrorMessage = error instanceof Error ? error.message : "Unknown error";
     return { success: false, error: webhookErrorMessage };
   }
 }

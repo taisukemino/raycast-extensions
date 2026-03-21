@@ -61,9 +61,7 @@ function isDictionaryEntryComplete(entry: DictionaryEntry): boolean {
  * @returns Filtered, complete dictionary entries
  * @throws {Error} When search query is empty or database query fails
  */
-export async function searchDictionary(
-  searchQuery: string,
-): Promise<DictionaryEntry[]> {
+export async function searchDictionary(searchQuery: string): Promise<DictionaryEntry[]> {
   const normalizedWord = normalizeWord(searchQuery);
 
   if (!normalizedWord) {
@@ -83,7 +81,5 @@ export async function searchDictionary(
     throw new Error(`Failed to search dictionary: ${error.message}`);
   }
 
-  return ((entries as DictionaryEntry[]) || []).filter(
-    isDictionaryEntryComplete,
-  );
+  return ((entries as DictionaryEntry[]) || []).filter(isDictionaryEntryComplete);
 }
