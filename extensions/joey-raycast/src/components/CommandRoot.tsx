@@ -151,6 +151,8 @@ export function CommandRoot({ initialSearchText }: { initialSearchText?: string 
     >
       {searchText.length === 0 ? (
         <List.EmptyView title="Type a word to search" icon={Icon.MagnifyingGlass} />
+      ) : isSearching && !results ? (
+        <List.EmptyView title="Searching..." icon={Icon.MagnifyingGlass} />
       ) : searchError ? (
         <List.EmptyView title="Search Failed" description={searchError.message} icon={Icon.ExclamationMark} />
       ) : results && results.length === 0 ? (

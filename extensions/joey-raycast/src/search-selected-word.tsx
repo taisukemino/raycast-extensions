@@ -2,16 +2,24 @@ import { Clipboard, getSelectedText, showToast, Toast } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { CommandRoot } from "./components/CommandRoot";
 
-// Reason: Raycast's getSelectedText() simulates Cmd+C internally. When nothing
-// is selected, it returns whatever was already on the clipboard. We compare
-// against the current clipboard to detect this false positive.
+// Reason: getSelectedText() simulates Cmd+C internally. In apps that don't
+// respond to Cmd+C for text selection (e.g. Linear), it returns stale clipboard
+// content. We clear the clipboard first so we can detect whether the app
+// actually copied anything, then restore the original clipboard afterward.
 async function readSelectedText(): Promise<string> {
-  const currentClipboardText = await Clipboard.readText();
+  const originalClipboard = await Clipboard.readText();
+
+  await Clipboard.copy("");
   const text = await getSelectedText();
   const trimmed = text.trim();
 
-  if (trimmed && trimmed !== currentClipboardText?.trim()) {
+  if (trimmed) {
     return trimmed;
+  }
+
+  // Restore original clipboard since nothing was selected
+  if (originalClipboard) {
+    await Clipboard.copy(originalClipboard);
   }
 
   throw new Error("No text selected");
