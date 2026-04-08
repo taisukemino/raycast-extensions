@@ -1,11 +1,11 @@
 import { environment } from "@raycast/api";
-import { exec } from "child_process";
+import { execFile } from "child_process";
 import { writeFile } from "fs/promises";
 import { join } from "path";
 import { getAudioUrl } from "./storage";
 
 function speakWithTts(word: string): void {
-  exec(`say "${word.replace(/"/g, '\\"')}"`);
+  execFile("say", [word]);
 }
 
 /**
@@ -32,5 +32,5 @@ export async function pronounceWord(audioPath: string | null, word: string): Pro
   const buffer = Buffer.from(await response.arrayBuffer());
   const pronunciationFilePath = join(environment.supportPath, "pronunciation.mp3");
   await writeFile(pronunciationFilePath, buffer);
-  exec(`afplay "${pronunciationFilePath}"`);
+  execFile("afplay", [pronunciationFilePath]);
 }

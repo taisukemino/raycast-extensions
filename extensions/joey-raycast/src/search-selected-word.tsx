@@ -5,24 +5,32 @@ import { CommandRoot } from "./components/CommandRoot";
 // Reason: getSelectedText() simulates Cmd+C internally. In apps that don't
 // respond to Cmd+C for text selection (e.g. Linear), it returns stale clipboard
 // content. We clear the clipboard first so we can detect whether the app
-// actually copied anything, then restore the original clipboard afterward.
+// actually copied anything, then restore the original clipboard if selection
+// fails or nothing was copied.
 async function readSelectedText(): Promise<string> {
   const originalClipboard = await Clipboard.readText();
 
   await Clipboard.copy("");
-  const text = await getSelectedText();
-  const trimmed = text.trim();
+  try {
+    const text = await getSelectedText();
+    const trimmed = text.trim();
 
-  if (trimmed) {
-    return trimmed;
+    if (trimmed) {
+      return trimmed;
+    }
+
+    if (originalClipboard) {
+      await Clipboard.copy(originalClipboard);
+    }
+
+    throw new Error("No text selected");
+  } catch {
+    if (originalClipboard) {
+      await Clipboard.copy(originalClipboard);
+    }
+
+    throw new Error("No text selected");
   }
-
-  // Restore original clipboard since nothing was selected
-  if (originalClipboard) {
-    await Clipboard.copy(originalClipboard);
-  }
-
-  throw new Error("No text selected");
 }
 
 export default function SearchSelectedWord() {
