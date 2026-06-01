@@ -25,6 +25,7 @@ import type { DictionaryEntry } from "../types";
  */
 export function CommandRoot({ initialSearchText }: { initialSearchText?: string }) {
   const [searchText, setSearchText] = useState(initialSearchText ?? "");
+  const [showInstallNudge, setShowInstallNudge] = useState(false);
   const { push, pop } = useNavigation();
   const { user, isLoading: isAuthLoading, error: authError, refresh: refreshAuth, signOut } = useAuth();
 
@@ -90,13 +91,16 @@ export function CommandRoot({ initialSearchText }: { initialSearchText?: string 
 
   // Reason: the install nudge is shown only after a brand-new sign-up, not for
   // returning sign-ins. `refreshAuth` loads the session before we continue.
+  // We always pop the sign-in view to return to the search list; for new users
+  // the nudge is rendered as this view's own content (below) rather than pushed
+  // on top of SignInView, so dismissing it lands on the search list — not back
+  // on the sign-in form.
   async function handleAuthenticated({ didSignUp }: { didSignUp: boolean }) {
     await refreshAuth();
     if (didSignUp) {
-      push(<InstallAppView onContinue={pop} />);
-    } else {
-      pop();
+      setShowInstallNudge(true);
     }
+    pop();
   }
 
   async function handleAddCard(entry: DictionaryEntry) {
@@ -168,6 +172,12 @@ export function CommandRoot({ initialSearchText }: { initialSearchText?: string 
     toast.style = Toast.Style.Failure;
     toast.title = "Failed to add card";
     toast.message = result.error;
+  }
+
+  // Brand-new accounts see the install nudge in place of the search list until
+  // they continue; returning sign-ins skip straight back to the list.
+  if (showInstallNudge) {
+    return <InstallAppView onContinue={() => setShowInstallNudge(false)} />;
   }
 
   return (
