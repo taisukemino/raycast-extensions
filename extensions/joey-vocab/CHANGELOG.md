@@ -1,6 +1,6 @@
 # Changelog
 
-## [Free Search & Passwordless Sign-In] - {PR_MERGE_DATE}
+## [Free Search & Passwordless Sign-In] - 2026-06-01
 
 - Search the dictionary for free — no account required
 - Sign in with a one-time code sent to your email, no password needed
